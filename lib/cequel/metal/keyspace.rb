@@ -192,7 +192,7 @@ module Cequel
           begin
             client.execute(sanitize(statement, bind_vars),
                            consistency || default_consistency)
-          rescue Cassandra::Errors::NotConnectedError, Ione::Io::ConnectionError
+          rescue Cassandra::Errors::ClientError, Ione::Io::ConnectionError
             clear_active_connections!
             raise if retries == 0
             retries -= 1
@@ -249,7 +249,7 @@ module Cequel
 
       def cluster
         synchronize do
-          @cluster ||= Cassandra.connect(client_options)
+          @cluster ||= Cassandra.cluster(client_options)
         end
       end
 
