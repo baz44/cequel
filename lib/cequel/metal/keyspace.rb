@@ -191,8 +191,8 @@ module Cequel
         log('CQL', statement, *bind_vars) do
           begin
             client.execute(sanitize(statement, bind_vars),
-                           consistency || default_consistency)
-          rescue Cassandra::Errors::ClientError, Ione::Io::ConnectionError
+                           {consistency: consistency || default_consistency})
+          rescue Cassandra::Errors::NoHostsAvailable, Ione::Io::ConnectionError
             clear_active_connections!
             raise if retries == 0
             retries -= 1
